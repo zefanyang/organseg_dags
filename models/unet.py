@@ -9,11 +9,7 @@ class UNet3D(nn.Module):
         super(UNet3D, self).__init__()
 
         self.no_class = out_channels
-        # number of groups for the GroupNorm
-        # num_groups = min(init_ch // 2, 32)
-
-        # encoder path consist of 4 subsequent Encoder modules
-        # the number of features maps is the same as in the paper
+        
         self.encoders = nn.ModuleList([
             Encoder(in_channels, init_ch, is_max_pool=False, conv_layer_order=conv_layer_order),
             Encoder(init_ch, 2 * init_ch, conv_layer_order=conv_layer_order),
@@ -46,8 +42,6 @@ class UNet3D(nn.Module):
         final = self.final_conv(dec1)
         return final
 
-# Some correctly implemented utilities from a github code repository,
-# but I don't like them.
 class Encoder(nn.Module):
     def __init__(self, in_channels, out_channels, conv_kernel_size=3, is_max_pool=True,
                  max_pool_kernel_size=(2, 2, 2), conv_layer_order='cbr', num_groups=32):
@@ -135,14 +129,3 @@ class DoubleConv(nn.Sequential):
             else:
                 raise ValueError(
                     f"Unsupported layer type '{char}'. MUST be one of 'b', 'r', 'c'")
-
-
-if __name__ == '__main__':
-    import time
-    model = UNet3D(1, 9, init_ch=16, conv_layer_order='cbr', interpolate=True)
-    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = model.to(device)
-    start = time.time()
-    summary(model, (1, 160, 160, 64))
-    print("take {:f} s".format(time.time() - start))
