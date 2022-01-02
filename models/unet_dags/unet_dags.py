@@ -1,6 +1,6 @@
-from models.unet import *
-from models.utils_graphical_model import UAG_RNN_4Neigh
-from models.utils_graphical_model import UAG_RNN_8Neigh
+from .unet import *
+from .utils_graphical_model import UAG_RNN_4Neigh
+from .utils_graphical_model import UAG_RNN_8Neigh
 
 class UNetDAGs(nn.Module):
     def __init__(self, in_ch, out_ch, init_ch=16, num_neigh='four'):
