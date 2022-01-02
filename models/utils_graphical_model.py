@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-# @Time  : 7/3/2021 9:11 PM
-# @Author: yzf
 import torch
 import torch.nn as nn
 from torch.nn import Conv1d, ReLU, Parameter
