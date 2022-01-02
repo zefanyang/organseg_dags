@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-# @Time  : 6/25/2021 10:41 AM
-# @Author: yzf
 import argparse
 import random
 import time
@@ -259,13 +255,3 @@ if __name__ == '__main__':
         torch.manual_seed(args.seed)
         cudnn.deterministic = True
     inference(args)
-
-
-
-
-# # Experiment: Add rotation jitter. Show performance drop
-# val_transforms = Compose([LoadImage(keys=['image', 'label', 'edge']),
-#                           Clip(keys=['image'], min=-250., max=200.),
-#                           ForeNormalize(keys=['image'], mask_key='label'),
-#                           RandRotate(keys=['image', 'label', 'edge'], interp_order=[1, 0, 0], angle=30., prob=1.),
-#                           ToTensor(keys=['image', 'label', 'edge'])])
