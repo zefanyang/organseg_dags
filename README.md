@@ -4,7 +4,7 @@
 - Install the required packages as follows:
   - torch==1.7.1
   - numpy==1.19.2
-
+  - MedPy==0.4.0
 - Clone the repository, develop a train.py, and evaluate the model on datasets at hand.
 
 ## Publication
