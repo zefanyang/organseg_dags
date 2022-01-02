@@ -1,10 +1,3 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-# @Time  : 7/1/2021 9:36 PM
-# @Author: yzf
-"""
-Make the following modification: adjust the seg_loss function so that it can calculate multiple outputs.
-"""
 import argparse
 import time
 import random
@@ -58,8 +51,7 @@ parser.add_argument('--beta', type=float, default=1.)  # for DSC
 parser.add_argument('--beta2', type=float, default=1.)  # for edge
 # parser.add_argument('--root', type=str, default='./output/cascaded_vnet')
 # parser.add_argument('--cache_dir', type=str, default='./cache/cascaded_vnet')
-parser.add_argument('--cv_json', type=str, default='/raid/yzf/data/abdominal_ct/cv_high_resolution.json')
-
+parser.add_argument('--cv_json', type=str, default='/raid/yzf/data/abdominal_ct/cv_high_resolution.json'
 parser.add_argument('--no_escs', type=int, default=4)
 
 def tr_summary(writer, epoch, c_lr, loss_seg, dsc, loss_edge=None):
@@ -386,15 +378,6 @@ def main():
     args.cache_dir = f'./cache/{Path(__file__).stem}_fold{args.fold}_{time.time():.2f}'
     args.root = f'./output/{args.net}_fold{args.fold}'
 
-    # Activate for parameter tuning
-    # args.cache_dir = f'./cache/{Path(__file__).stem}_fold{args.fold}_wd{args.weight_decay}'
-    # args.root = f'./output/{args.net}_fold{args.fold}_wd{args.weight_decay}'
-
-    # # Activate for ESCs ablation study
-    # args.cache_dir = f'./cache/{Path(__file__).stem}_fold{args.fold}_{args.no_escs}_escs'
-    # args.root = f'./output/{args.net}_{args.no_escs}_escs_fold{args.fold}'
-
-
 
     ## environment
     # gpu
@@ -433,25 +416,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-    # if args.net == 'grfe_net':
-    #     model = GRFENet(1, args.num_class, input_size=args.size, init_channel_number=args.init_channels, interpolate=True)
-    # elif args.net == 'unet_dags':
-    #     model =  UNetDAGs(1, args.num_class, input_size=args.size, init_channel_number=args.init_channels, interpolate=True)
-    # elif args.net == 'unet_edge_ef':
-    #     model = UNetEdgeEF(1, args.num_class, init_channel_number=args.init_channels, interpolate=True)
-    # elif args.net == 'unet_edge':
-    #     model =  UNetEdge(1, args.num_class, init_channel_number=args.init_channels, interpolate=True)
-    # elif args.net == 'vnet_knl3_paper_version':
-    #     model = VNetKnl3PaperVer()
-    # elif args.net == 'vnet':
-    #     model = VNet()
-
-    # from models.unet_edge_ef_grfe import GRFENet
-    # from models.unet_dags import UNetDAGs
-    # from models.unet_edge_ef import UNetEdgeEF
-    # from models.unet_edge import UNetEdge
-    # from models.exp_arch.vnet import VNet
-    # from models.exp_arch.vnet_kernel_size_3_paper_version import VNetKnl3PaperVer
-    # from models.cascaded_vnet.first_stage_network import FirstStageVNet
