@@ -8,13 +8,73 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchsummary import summary
-from models.unet import Encoder, Decoder, DoubleConv
-from models.unet_nine_layers.unet_l9_deep_sup import DeepSup
-from models.unet_nine_layers.unet_l9_deep_sup_edge import EGModule
-from models.unet_nine_layers.unet_l9_deep_sup_edge_skip import edge_fusion
-from models.unet_nine_layers.unet_l9_deep_sup_rfp import RFP_UAGs
-# from models.unet_nine_layers.unet_l9_deep_sup_rfp_multi_head import RFP_UAGs
+from .unet import Encoder, Decoder, DoubleConv
 
+class DeepSup(nn.Module):
+    def __init__(self, in_ch, out_ch, scale_factor):
+        super().__init__()
+        self.dsup = nn.Sequential(nn.Conv3d(in_ch, out_ch, kernel_size=1, stride=1, padding=0),
+                                  nn.Upsample(scale_factor=scale_factor, mode='trilinear'))
+    def forward(self, x):
+        return self.dsup(x)
+
+class EGModule(nn.Module):
+    def __init__(self, init_ch):
+        super(EGModule, self).__init__()
+
+        # 3*3*3 -> 1*1*1 convolution to concentrate the channel
+        self.h_conv = nn.Sequential(
+            nn.Conv3d(init_ch * 16, init_ch * 2, 1, 1),
+            nn.BatchNorm3d(init_ch * 2),
+            nn.ReLU()
+        )
+
+        self.e_conv = nn.Sequential(
+            nn.Conv3d(init_ch * 2, init_ch * 2, 3, 1, 1),
+            nn.BatchNorm3d(init_ch * 2),
+            nn.ReLU(),
+            nn.Conv3d(init_ch * 2, init_ch * 2, 3, 1, 1),
+            nn.BatchNorm3d(init_ch * 2),
+            nn.ReLU(),
+        )
+        self.out_conv = nn.Conv3d(init_ch*2, 1, 1)
+
+    def forward(self, l_feat, h_feat):
+        h_feat = self.h_conv(h_feat)
+        h_feat = F.interpolate(h_feat, scale_factor=8, mode='trilinear')
+
+        # add ReLU after addition? Show mild performance drop. The ReLU has no effect.
+        feat = h_feat + l_feat
+        edge_feat = self.e_conv(feat)
+        edge_score = self.out_conv(edge_feat)
+        edge_score = F.interpolate(edge_score, scale_factor=2, mode='trilinear')
+        return edge_feat, edge_score
+
+def edge_fusion(skip_feat, edge_feat):
+    edge_feat = F.interpolate(edge_feat, skip_feat.size()[2:], mode='trilinear')
+    return torch.cat((edge_feat, skip_feat), dim=1)
+
+class RFP_UAGs(nn.Module):
+    def __init__(self, in_ch, num_neigh='four'):
+        super().__init__()
+        self.dag_list = None
+        if num_neigh == 'four':
+            self.dag_list = nn.ModuleList([UAG_RNN_4Neigh(in_ch) for _ in range(64//16)])  # hard-coding '64//8'
+        elif num_neigh == 'eight':
+            self.dag_list = nn.ModuleList([UAG_RNN_8Neigh(in_ch) for _ in range(64//16)])  # hard-coding '64//8'
+
+    def forward(self, x):
+        d = x.shape[-1]
+        x_hid = []
+        x_adp = x
+        
+        for i in range(d):
+            hid = self.dag_list[i](x_adp[..., i])
+            x_hid.append(hid.unsqueeze(-1))
+        x_hid = torch.cat(x_hid, dim=-1)
+
+        return x_adp + x_hid
+    
 class UNetL9DeepSupFullScheme(nn.Module):
     def __init__(self, in_ch, out_ch, num_neigh='four', interpolate=True, init_ch=16, conv_layer_order='cbr'):
         super(UNetL9DeepSupFullScheme, self).__init__()
@@ -109,24 +169,3 @@ class UNetL9DeepSupFullScheme(nn.Module):
 
         return seg_score, comb_seg_score, edge_score
 
-if __name__ == '__main__':
-    import time
-    import os
-    from torchsummary import summary
-    os.environ['CUDA_VISIBLE_DEVICES'] = '1'
-    model = UNetL9DeepSupFullScheme(1, 9, num_neigh='eight', init_ch=16, conv_layer_order='cbr', interpolate=True)
-    device = torch.device('cuda')
-    model = model.to(device)
-
-    data = torch.randn((1, 1, 160, 160, 64)).cuda()
-    tic = time.time()
-    x = model(data)
-    toc = time.time()
-    print('Inference Time {:.4f}'.format(toc-tic))
-    # four neighbor: 0.9381 s
-    # eight neighbor: 2.3929 s
-
-    # summary(model, (1, 160, 160, 64))
-
-    # from models.unet_nine_layers.unet_l9 import count_parameters
-    # print('Total number of trainable parameters: {:.2f} M'.format(count_parameters(model) / 1e6))
