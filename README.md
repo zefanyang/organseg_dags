@@ -5,7 +5,7 @@
   - torch==1.7.1
   - numpy==1.19.2
 
-- Clone the repository, devise a train.py, and evaluate the model on datasets at hand.
+- Clone the repository, develop a train.py, and evaluate the model on datasets at hand.
 
 ## Publication
 The codebase for the paper (under review):
