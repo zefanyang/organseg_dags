@@ -8,3 +8,5 @@ The codebase for the paper (under review):
 Requirments:
 - torch==1.7.1
 - numpy==1.19.2
+
+We recommend the users to clone the model code, devise a training interface and validate the dataset at hand.
