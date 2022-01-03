@@ -8,8 +8,9 @@
 
 - **How to implement?**
   - Clone the repository
+  - Develop a subclass of `torch.utils.data.Dataset` for your dataset at hand
   - Develop a custom `train.py`
-  - Evaluate the model on datasets at hand.
+  - Train and evaluate the models
 
 ## Publication
 The codebase for the paper (under review):
