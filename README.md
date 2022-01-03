@@ -5,6 +5,7 @@
   - torch==1.7.1
   - numpy==1.19.2
   - MedPy==0.4.0
+
 - How to implement?
   - Clone the repository
   - Develop a train.py
