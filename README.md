@@ -8,7 +8,7 @@
 
 - How to implement?
   - Clone the repository
-  - Develop a custom train.py
+  - Develop a custom `train.py`
   - Evaluate the model on datasets at hand.
 
 ## Publication
