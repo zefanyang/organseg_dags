@@ -6,7 +6,7 @@
   - numpy==1.19.2
   - MedPy==0.4.0
 
-- **How to implement:**
+- **How to implement?**
   - Clone the repository
   - Develop a subclass of `torch.utils.data.Dataset` for your dataset at hand
   - Develop a custom `train.py`
