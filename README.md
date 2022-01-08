@@ -1,5 +1,5 @@
 # organseg_dags
-
+The repository contains the codebase for multi-organ segmentation with directed acyclic graphs (DAGs) in CT.
 ## Usage
 - **Install the required packages as follows:**
   - torch==1.7.1
