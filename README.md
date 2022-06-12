@@ -30,6 +30,6 @@ The option `--fold=0` specifies the cross-validation fold, and `--cv_json='/path
 Modify hyper-parameters if necessary which are by default `--batch_size=2`, `--optim='adam'`, `--lr=1e-3`, `--weight_decay=3e-4`, `--num_epoch=400`, and `--beta=1` and `--beta2=1` specifying the weights of the segmentation and edge detection objectives respectively.
 
 ### Evaluation
-The evaluation process defined in `./inference.py` computes the following volumetric metrics: the Dice similarity coefficient, the 95th percentile of the Hausdorff distance, and average symmetric surface distance.
+The evaluation process defined in `./inference.py` computes the following volumetric metrics: the Dice similarity coefficient, the 95th percentile Hausdorff distance, and the average symmetric surface distance.
 
-Specify the validation fold `--fold` and the path of a look-up table recoding validation data `--cv_json`.
+Specify the validation fold `--fold` and the path of a look-up table recoding directories of validation data `--cv_json`.
