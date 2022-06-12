@@ -9,14 +9,27 @@ Install the following essential packages using `pip install` command:
 
 ## Implementation
 ### Data
-Images, labels, and edge maps are stored in the following folders:
+Store images, labels, and edge maps in the following folders:
+
 `/path/to/data/image/image0002.nii.gz`
+
 `/path/to/data/label/label0002.nii.gz`
+
 `/path/to/data/edge/edge0002.nii.gz`
 
-  - Develop a subclass of `torch.utils.data.Dataset` for your dataset at hand
-  - Develop a custom `train.py`
+Make a look-up table using `.jason` format recording image, label and edge map directories of each patient, for example, our `./data/cross_validation.jason`.
 
-# Publication
-The conference paper:
-> "Graph-based Regional Feature Enhancing for Abdominal Multi-Organ Segmentation in CT."
+### Dataloader
+`./cacheio/Dataset.py` contains the class `Dataset`, which is a subclass of `torch.utils.data.Dataset` used for obtaining image, label, and edge map directories of a patient given the look-up table and then loading and augmenting data. Rewrite the class functions to make sure that data can be correctly loaded.
+
+### Training
+The process of network training is defined in `./train_full_scheme.py`. 
+
+The option `--fold=0` specifies the cross-validation fold, and `--cv_json='/path/to/cross_validation.jason'` the path of a look-up table given your dataset at hand. 
+
+Modify hyper-parameters if necessary which are by default `--batch_size=2`, `--optim='adam'`, `--lr=1e-3`, `--weight_decay=3e-4`, `--num_epoch=400`, and `--beta=1` and `--beta2=1` specifying the weights of the segmentation and edge detection objectives respectively.
+
+### Evaluation
+The evaluation process defined in `./inference.py` computes the following volumetric metrics: the Dice similarity coefficient, the 95th percentile of the Hausdorff distance, and average symmetric surface distance.
+
+Specify the validation fold `--fold` and the path of a look-up table recoding validation data `--cv_json`.
