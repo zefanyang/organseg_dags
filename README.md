@@ -23,9 +23,9 @@ Make a look-up table using `.jason` format recording image, label and edge map d
 `./cacheio/Dataset.py` contains the class `Dataset`, which is a subclass of `torch.utils.data.Dataset` used for obtaining image, label, and edge map directories of a patient given the look-up table and then loading and augmenting data. Rewrite the class functions to make sure that data can be correctly loaded.
 
 ### Training
-The process of network training is defined in `./train_full_scheme.py`. 
+The process of cross-validation training is defined in `./train_full_scheme.py`. 
 
-The option `--fold=0` specifies the cross-validation fold, and `--cv_json='/path/to/cross_validation.jason'` the path of a look-up table given your dataset at hand. 
+The option `--fold=0` specifies the cross-validation fold, and `--cv_json='/path/to/cross_validation.jason'` the path of a look-up table indexing your data at hand. 
 
 Modify hyper-parameters if necessary which are by default `--batch_size=2`, `--optim='adam'`, `--lr=1e-3`, `--weight_decay=3e-4`, `--num_epoch=400`, and `--beta=1` and `--beta2=1` specifying the weights of the segmentation and edge detection objectives respectively.
 
