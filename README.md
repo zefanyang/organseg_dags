@@ -3,7 +3,7 @@ This repository contains the codebase for 3D multi-organ segmentation in CT, usi
 # Usage
 ## Environment
 Install the following essential packages using `pip install` command:
-  - torch==1.7.1 (or select versions corresponding to your CUDA versions on the [PyTorch website](https://pytorch.org/get-started/previous-versions/))
+  - torch==1.7.1 (Or install other versions of PyTorch corresponding to your CUDA versions using commands on the [PyTorch website](https://pytorch.org/get-started/previous-versions/).)
   - numpy==1.19.2
   - MedPy==0.4.0
 
