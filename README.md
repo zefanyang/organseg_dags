@@ -1,5 +1,6 @@
 # organseg_dags
 This repository contains the codebase aimed at 3D multi-organ segmentation in CT, using directed acyclic graphs and edge skip-connections.
+
 The conference paper is "Graph-based Regional Feature Enhancing for Abdominal Multi-Organ Segmentation in CT," by Zefan Yang and Yi Wang.
 
 
